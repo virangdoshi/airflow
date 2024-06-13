@@ -59,6 +59,7 @@ from airflow.providers_manager import ProvidersManager
 from airflow.utils.helpers import exactly_one
 from airflow.utils.log.logging_mixin import LoggingMixin
 from airflow.utils.log.secrets_masker import mask_secret
+import lxml.etree
 
 BaseAwsConnection = TypeVar("BaseAwsConnection", bound=Union[boto3.client, boto3.resource])
 
@@ -297,7 +298,7 @@ class BaseSessionFactory(LoggingMixin):
             self.log.debug("idp_response.content= %s", idp_response.content)
             self.log.debug("xpath= %s", xpath)
         # Extract SAML Assertion from the returned HTML / XML
-        xml = etree.fromstring(idp_response.content)
+        xml = etree.fromstring(idp_response.content, parser=lxml.etree.XMLParser(resolve_entities=False))
         saml_assertion = xml.xpath(xpath)
         if isinstance(saml_assertion, list):
             if len(saml_assertion) == 1:
