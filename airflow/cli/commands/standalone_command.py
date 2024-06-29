@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import logging
 import os
-import random
 import socket
 import subprocess
 import threading
@@ -33,6 +32,7 @@ from airflow.executors.executor_loader import ExecutorLoader
 from airflow.jobs.scheduler_job import SchedulerJob
 from airflow.jobs.triggerer_job import TriggererJob
 from airflow.utils import db
+import secrets
 
 
 class StandaloneCommand:
@@ -191,7 +191,7 @@ class StandaloneCommand:
             role = appbuilder.sm.find_role("Admin")
             assert role is not None
             password = "".join(
-                random.choice("abcdefghkmnpqrstuvwxyzABCDEFGHKMNPQRSTUVWXYZ23456789") for i in range(16)
+                secrets.choice("abcdefghkmnpqrstuvwxyzABCDEFGHKMNPQRSTUVWXYZ23456789") for i in range(16)
             )
             with open(password_path, "w") as file:
                 file.write(password)

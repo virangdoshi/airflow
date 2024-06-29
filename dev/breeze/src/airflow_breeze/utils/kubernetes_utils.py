@@ -17,7 +17,6 @@
 from __future__ import annotations
 
 import os
-import random
 import re
 import shutil
 import socket
@@ -38,6 +37,7 @@ from airflow_breeze.utils.host_info_utils import Architecture, get_host_architec
 from airflow_breeze.utils.path_utils import AIRFLOW_SOURCES_ROOT, BUILD_CACHE_DIR
 from airflow_breeze.utils.run_utils import RunCommandResult, run_command
 from airflow_breeze.utils.shared_options import get_dry_run
+import secrets
 
 K8S_ENV_PATH = BUILD_CACHE_DIR / ".k8s-env"
 K8S_CLUSTERS_PATH = BUILD_CACHE_DIR / ".k8s-clusters"
@@ -420,7 +420,7 @@ END_PORT_RANGE = 49000
 
 def _get_free_port() -> int:
     while True:
-        port = random.randrange(START_PORT_RANGE, END_PORT_RANGE)
+        port = secrets.SystemRandom().randrange(START_PORT_RANGE, END_PORT_RANGE)
         if port in USED_SOCKETS:
             continue
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

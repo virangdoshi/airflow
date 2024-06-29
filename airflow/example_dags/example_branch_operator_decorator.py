@@ -18,8 +18,6 @@
 """Example DAG demonstrating the usage of the ``@task.branch`` TaskFlow API decorator."""
 from __future__ import annotations
 
-import random
-
 import pendulum
 
 from airflow import DAG
@@ -27,6 +25,7 @@ from airflow.decorators import task
 from airflow.operators.empty import EmptyOperator
 from airflow.utils.edgemodifier import Label
 from airflow.utils.trigger_rule import TriggerRule
+import secrets
 
 with DAG(
     dag_id="example_branch_python_operator_decorator",
@@ -41,7 +40,7 @@ with DAG(
 
     @task.branch(task_id="branching")
     def random_choice(choices: list[str]) -> str:
-        return random.choice(choices)
+        return secrets.choice(choices)
 
     random_choice_instance = random_choice(choices=options)
 
