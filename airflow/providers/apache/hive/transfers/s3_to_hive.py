@@ -226,7 +226,7 @@ class S3ToHiveOperator(BaseOperator):
 
     def _get_top_row_as_list(self, file_name):
         with open(file_name) as file:
-            header_line = file.readline().strip()
+            header_line = file.readline(5_000_000).strip()
             return header_line.split(self.delimiter)
 
     def _match_headers(self, header_list):
