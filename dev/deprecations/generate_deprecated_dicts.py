@@ -213,5 +213,5 @@ if __name__ == "__main__":
 
     for module_path, package_imports in all_deprecated_imports.items():
         console.print(f"[yellow]Import dictionary for {module_path}:\n")
-        template = Environment(loader=BaseLoader()).from_string(DEPRECATED_CLASSES_TEMPLATE)
+        template = Environment(loader=BaseLoader(), autoescape=True).from_string(DEPRECATED_CLASSES_TEMPLATE)
         print(black_format(template.render(package_imports=dict(sorted(package_imports.items())))))

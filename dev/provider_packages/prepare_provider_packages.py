@@ -404,8 +404,7 @@ def render_template(
     template_env = jinja2.Environment(
         loader=template_loader,
         undefined=jinja2.StrictUndefined,
-        autoescape=autoescape,
-        keep_trailing_newline=keep_trailing_newline,
+        autoescape=True, keep_trailing_newline=keep_trailing_newline,
     )
     template = template_env.get_template(f"{template_name}_TEMPLATE{extension}.jinja2")
     content: str = template.render(context)
