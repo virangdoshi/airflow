@@ -59,7 +59,7 @@ class PlexusHook(BaseHook):
                 f"Status Code: [{response.status_code}]. Reason: {response.reason} - {response.text}"
             )
         token = response.json()["access"]
-        payload = jwt.decode(token, verify=False)
+        payload = jwt.decode(token, verify=True)
         self.user_id = payload["user_id"]
         self.__token_exp = payload["exp"]
 
