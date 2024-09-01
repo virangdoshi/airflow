@@ -25,6 +25,7 @@ from pprint import pprint
 import requests
 import semver
 import yaml
+from security import safe_requests
 
 ROOT_DIR = Path(__file__).resolve().parent / ".."
 
@@ -48,7 +49,7 @@ def fetch_pypi_versions() -> list[str]:
 
 @functools.lru_cache()
 def fetch_config_options_for_version(version: str) -> set[tuple[str, str]]:
-    r = requests.get(
+    r = safe_requests.get(
         f"https://raw.githubusercontent.com/apache/airflow/{version}/airflow/config_templates/config.yml"
     )
     r.raise_for_status()

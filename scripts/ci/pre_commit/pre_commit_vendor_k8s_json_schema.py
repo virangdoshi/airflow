@@ -20,8 +20,7 @@ from __future__ import annotations
 
 import json
 from typing import Iterator
-
-import requests
+from security import safe_requests
 
 K8S_DEFINITIONS = (
     "https://raw.githubusercontent.com/yannh/kubernetes-json-schema"
@@ -48,7 +47,7 @@ def find_refs(props: dict) -> Iterator[str]:
 
 
 def get_remote_schema(url: str) -> dict:
-    req = requests.get(url)
+    req = safe_requests.get(url)
     req.raise_for_status()
     return req.json()
 

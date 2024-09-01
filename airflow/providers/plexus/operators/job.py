@@ -25,6 +25,7 @@ import requests
 from airflow.exceptions import AirflowException
 from airflow.models import BaseOperator
 from airflow.providers.plexus.hooks.plexus import PlexusHook
+from security import safe_requests
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class PlexusJobOperator(BaseOperator):
             while state != end_state:
                 time.sleep(3)
                 jid_endpoint = jobs_endpoint + f"{jid}/"
-                get_job = requests.get(jid_endpoint, headers=headers, timeout=5)
+                get_job = safe_requests.get(jid_endpoint, headers=headers, timeout=5)
                 if not get_job.ok:
                     raise AirflowException(
                         "Could not retrieve job status. "
@@ -112,7 +113,7 @@ class PlexusJobOperator(BaseOperator):
         else:
             endpoint = hook.host + lookup[0]
         headers = {"Authorization": f"Bearer {hook.token}"}
-        response = requests.get(endpoint, headers=headers, timeout=5)
+        response = safe_requests.get(endpoint, headers=headers, timeout=5)
         results = response.json()["results"]
 
         v = None

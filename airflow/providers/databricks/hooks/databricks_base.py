@@ -50,6 +50,7 @@ from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
 from airflow.models import Connection
 from airflow.providers_manager import ProvidersManager
+from security import safe_requests
 
 # https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/aad/service-prin-aad-token#--get-an-azure-active-directory-access-token
 # https://docs.microsoft.com/en-us/graph/deployments#app-registration-and-token-service-root-endpoints
@@ -229,7 +230,7 @@ class BaseDatabricksHook(BaseHook):
                             "api-version": "2018-02-01",
                             "resource": resource,
                         }
-                        resp = requests.get(
+                        resp = safe_requests.get(
                             AZURE_METADATA_SERVICE_TOKEN_URL,
                             params=params,
                             headers={**self.user_agent_header, "Metadata": "true"},
@@ -389,7 +390,7 @@ class BaseDatabricksHook(BaseHook):
         https://docs.microsoft.com/en-us/azure/virtual-machines/linux/instance-metadata-service
         """
         try:
-            jsn = requests.get(
+            jsn = safe_requests.get(
                 AZURE_METADATA_SERVICE_INSTANCE_URL,
                 params={"api-version": "2021-02-01"},
                 headers={"Metadata": "true"},

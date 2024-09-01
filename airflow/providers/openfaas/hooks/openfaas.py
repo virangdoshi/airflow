@@ -23,6 +23,7 @@ import requests
 
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
+from security import safe_requests
 
 OK_STATUS_CODE = 202
 
@@ -107,7 +108,7 @@ class OpenFaasHook(BaseHook):
         """Whether OpenFaaS function exists or not"""
         url = self.get_conn().host + self.GET_FUNCTION + self.function_name
 
-        response = requests.get(url)
+        response = safe_requests.get(url)
         if response.ok:
             return True
         else:

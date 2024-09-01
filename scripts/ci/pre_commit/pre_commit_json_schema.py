@@ -23,11 +23,10 @@ import json
 import os
 import re
 import sys
-
-import requests
 import yaml
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import extend, validator_for
+from security import safe_requests
 
 if __name__ != "__main__":
     raise Exception(
@@ -70,12 +69,12 @@ def fetch_and_cache(url: str, output_filename: str):
 
     # If we have a file and etag, check the fast path
     if os.path.exists(cache_filepath) and etag:
-        res = requests.get(url, headers={"If-None-Match": etag})
+        res = safe_requests.get(url, headers={"If-None-Match": etag})
         if res.status_code == 304:
             return cache_filepath
 
     # Slow patch
-    res = requests.get(url)
+    res = safe_requests.get(url)
     res.raise_for_status()
 
     with open(cache_filepath, "wb") as output_file:

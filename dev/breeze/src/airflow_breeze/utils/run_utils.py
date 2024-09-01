@@ -38,6 +38,7 @@ from airflow_breeze.utils.ci_group import ci_group
 from airflow_breeze.utils.console import Output, get_console
 from airflow_breeze.utils.path_utils import AIRFLOW_SOURCES_ROOT
 from airflow_breeze.utils.shared_options import get_dry_run, get_verbose
+from security import safe_requests
 
 RunCommandResult = Union[subprocess.CompletedProcess, subprocess.CalledProcessError]
 
@@ -310,12 +311,10 @@ def fix_group_permissions():
 
 def is_repo_rebased(repo: str, branch: str):
     """Returns True if the local branch contains the latest remote SHA (i.e. if it is rebased)"""
-    # We import it locally so that click autocomplete works
-    import requests
 
     gh_url = f"https://api.github.com/repos/{repo}/commits/{branch}"
     headers_dict = {"Accept": "application/vnd.github.VERSION.sha"}
-    latest_sha = requests.get(gh_url, headers=headers_dict).text.strip()
+    latest_sha = safe_requests.get(gh_url, headers=headers_dict).text.strip()
     rebased = False
     command_result = run_command(["git", "log", "--format=format:%H"], capture_output=True, text=True)
     commit_list = command_result.stdout.strip().splitlines() if command_result is not None else "missing"

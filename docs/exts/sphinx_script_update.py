@@ -23,10 +23,9 @@ import shutil
 import sys
 import tempfile
 from functools import lru_cache
-
-import requests
 from sphinx.builders import html as builders
 from sphinx.util import logging
+from security import safe_requests
 
 log = logging.getLogger(__name__)
 
@@ -76,12 +75,12 @@ def fetch_and_cache(script_url: str, output_filename: str):
 
     # If we have a file and etag, check the fast path
     if os.path.exists(cache_filepath) and etag:
-        res = requests.get(script_url, headers={"If-None-Match": etag})
+        res = safe_requests.get(script_url, headers={"If-None-Match": etag})
         if res.status_code == 304:
             return cache_filepath
 
     # Slow patch
-    res = requests.get(script_url)
+    res = safe_requests.get(script_url)
     res.raise_for_status()
 
     with open(cache_filepath, "wb") as output_file:

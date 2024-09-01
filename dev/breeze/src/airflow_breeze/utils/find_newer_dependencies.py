@@ -37,16 +37,16 @@ from typing import Any
 from rich.progress import Progress
 
 from airflow_breeze.utils.console import get_console
+from security import safe_requests
 
 
 def find_newer_dependencies(
     constraints_branch: str, python: str, timezone: str, updated_on_or_after: str, max_age: int
 ):
     import pendulum
-    import requests
     from packaging import version
 
-    constraints = requests.get(
+    constraints = safe_requests.get(
         f"https://raw.githubusercontent.com/apache/airflow/{constraints_branch}/constraints-{python}.txt"
     ).text
     package_lines = list(filter(lambda x: not x.startswith("#"), constraints.splitlines()))
@@ -101,11 +101,10 @@ def find_newer_dependencies(
 
 
 def get_releases_and_upload_times(package, min_date, current_version, tz) -> list[tuple[str, Any]]:
-    import requests
     from dateutil.parser import isoparse
     from packaging import version
 
-    package_info = json.loads(requests.get(f"https://pypi.python.org/pypi/{package}/json").text)
+    package_info = json.loads(safe_requests.get(f"https://pypi.python.org/pypi/{package}/json").text)
     releases: list[tuple[Any, Any]] = []
     for release_version, release_info in package_info["releases"].items():
         if release_info and not release_info[0]["yanked"]:
