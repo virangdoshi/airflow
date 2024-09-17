@@ -24,6 +24,7 @@ from pathlib import Path
 from subprocess import call
 
 from rich.console import Console
+from security import safe_command
 
 AIRFLOW_SOURCES_DIR = Path(__file__).parents[3].resolve()
 BREEZE_IMAGES_DIR = AIRFLOW_SOURCES_DIR / "images" / "breeze"
@@ -64,8 +65,7 @@ def is_regeneration_needed() -> bool:
     env["AIRFLOW_SOURCES_ROOT"] = str(AIRFLOW_SOURCES_DIR)
     # needed to keep consistent output
     env["PYTHONPATH"] = str(BREEZE_SOURCES_DIR)
-    return_code = call(
-        [
+    return_code = safe_command.run(call, [
             sys.executable,
             str(BREEZE_SOURCES_DIR / "airflow_breeze" / "breeze.py"),
             "setup",

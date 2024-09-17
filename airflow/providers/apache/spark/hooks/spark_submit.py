@@ -29,6 +29,7 @@ from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
 from airflow.security.kerberos import renew_from_kt
 from airflow.utils.log.logging_mixin import LoggingMixin
+from security import safe_command
 
 with contextlib.suppress(ImportError, NameError):
     from airflow.kubernetes import kube_client
@@ -402,8 +403,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
             env.update(self._env)
             kwargs["env"] = env
 
-        self._submit_sp = subprocess.Popen(
-            spark_submit_cmd,
+        self._submit_sp = safe_command.run(subprocess.Popen, spark_submit_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             bufsize=-1,
@@ -564,8 +564,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
             self.log.debug("polling status of spark driver with id %s", self._driver_id)
 
             poll_drive_status_cmd = self._build_track_driver_status_command()
-            status_process: Any = subprocess.Popen(
-                poll_drive_status_cmd,
+            status_process: Any = safe_command.run(subprocess.Popen, poll_drive_status_cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 bufsize=-1,
@@ -611,7 +610,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
             self.log.info("Killing driver %s on cluster", self._driver_id)
 
             kill_cmd = self._build_spark_driver_kill_command()
-            with subprocess.Popen(kill_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as driver_kill:
+            with safe_command.run(subprocess.Popen, kill_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as driver_kill:
                 self.log.info(
                     "Spark driver %s killed with return code: %s", self._driver_id, driver_kill.wait()
                 )
@@ -632,8 +631,7 @@ class SparkSubmitHook(BaseHook, LoggingMixin):
                     ccacche = airflow_conf.get_mandatory_value("kerberos", "ccache")
                     env["KRB5CCNAME"] = ccacche
 
-                with subprocess.Popen(
-                    kill_cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                with safe_command.run(subprocess.Popen, kill_cmd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 ) as yarn_kill:
                     self.log.info("YARN app killed with return code: %s", yarn_kill.wait())
 

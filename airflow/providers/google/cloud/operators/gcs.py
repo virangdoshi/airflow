@@ -26,6 +26,7 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import TYPE_CHECKING, Sequence
 
 import pendulum
+from security import safe_command
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -570,8 +571,7 @@ class GCSFileTransformOperator(BaseOperator):
             self.log.info("Starting the transformation")
             cmd = [self.transform_script] if isinstance(self.transform_script, str) else self.transform_script
             cmd += [source_file.name, destination_file.name]
-            with subprocess.Popen(
-                args=cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True
+            with safe_command.run(subprocess.Popen, args=cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True
             ) as process:
                 self.log.info("Process output:")
                 if process.stdout:
@@ -808,8 +808,7 @@ class GCSTimeSpanFileTransformOperator(BaseOperator):
                 timespan_start.replace(microsecond=0).isoformat(),
                 timespan_end.replace(microsecond=0).isoformat(),
             ]
-            with subprocess.Popen(
-                args=cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True
+            with safe_command.run(subprocess.Popen, args=cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True
             ) as process:
                 self.log.info("Process output:")
                 if process.stdout:

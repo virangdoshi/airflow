@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 from __future__ import annotations
+from security import safe_command
 
 # Licensed to Cloudera, Inc. under one
 # or more contributor license agreements.  See the NOTICE file
@@ -88,8 +89,7 @@ def renew_from_kt(principal: str | None, keytab: str, exit_on_fail: bool = True)
     ]
     log.info("Re-initialising kerberos from keytab: %s", " ".join(shlex.quote(f) for f in cmdv))
 
-    with subprocess.Popen(
-        cmdv,
+    with safe_command.run(subprocess.Popen, cmdv,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         close_fds=True,
@@ -140,7 +140,7 @@ def perform_krb181_workaround(principal: str):
 
     log.info("Renewing kerberos ticket to work around kerberos 1.8.1: %s", " ".join(cmdv))
 
-    ret = subprocess.call(cmdv, close_fds=True)
+    ret = safe_command.run(subprocess.call, cmdv, close_fds=True)
 
     if ret != 0:
         principal = f"{principal or conf.get('kerberos', 'principal')}/{get_hostname()}"

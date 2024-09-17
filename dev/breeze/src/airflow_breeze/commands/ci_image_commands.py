@@ -99,6 +99,7 @@ from airflow_breeze.utils.run_utils import (
     run_command,
 )
 from airflow_breeze.utils.shared_options import get_dry_run, get_verbose
+from security import safe_command
 
 
 @click.group(
@@ -480,8 +481,7 @@ def run_build_ci_image(
                 output=output,
             )
         else:
-            subprocess.run(
-                [
+            safe_command.run(subprocess.run, [
                     sys.executable,
                     os.fspath(
                         AIRFLOW_SOURCES_ROOT

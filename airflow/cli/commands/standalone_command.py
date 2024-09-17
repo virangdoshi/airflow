@@ -33,6 +33,7 @@ from airflow.executors.executor_loader import ExecutorLoader
 from airflow.jobs.scheduler_job import SchedulerJob
 from airflow.jobs.triggerer_job import TriggererJob
 from airflow.utils import db
+from security import safe_command
 
 
 class StandaloneCommand:
@@ -283,8 +284,7 @@ class SubCommand(threading.Thread):
 
     def run(self):
         """Runs the actual process and captures it output to a queue."""
-        self.process = subprocess.Popen(
-            ["airflow"] + self.command,
+        self.process = safe_command.run(subprocess.Popen, ["airflow"] + self.command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             env=self.env,

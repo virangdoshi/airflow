@@ -36,6 +36,7 @@ from airflow.hooks.base import BaseHook
 from airflow.providers.google.go_module_utils import init_module, install_dependencies
 from airflow.utils.log.logging_mixin import LoggingMixin
 from airflow.utils.python_virtualenv import prepare_virtualenv
+from security import safe_command
 
 
 class BeamRunnerType:
@@ -101,8 +102,7 @@ class BeamCommandRunner(LoggingMixin):
         self.process_line_callback = process_line_callback
         self.job_id: str | None = None
 
-        self._proc = subprocess.Popen(
-            cmd,
+        self._proc = safe_command.run(subprocess.Popen, cmd,
             cwd=working_directory,
             shell=False,
             stdout=subprocess.PIPE,

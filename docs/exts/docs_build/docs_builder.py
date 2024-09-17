@@ -36,6 +36,7 @@ from .code_utils import (
 from .errors import DocBuildError, parse_sphinx_warnings
 from .helm_chart_utils import chart_version
 from .spelling_checks import SpellingError, parse_spelling_warnings
+from security import safe_command
 
 console = Console(force_terminal=True, color_system="standard", width=CONSOLE_WIDTH)
 
@@ -163,8 +164,7 @@ class AirflowDocsBuilder:
             )
             console.print(f"[info]{self.package_name:60}:[/] The output is hidden until an error occurs.")
         with open(self.log_spelling_filename, "wt") as output:
-            completed_proc = run(
-                build_cmd,
+            completed_proc = safe_command.run(run, build_cmd,
                 cwd=self._src_dir,
                 env=env,
                 stdout=output if not verbose else None,
@@ -242,8 +242,7 @@ class AirflowDocsBuilder:
                 f"The output is hidden until an error occurs."
             )
         with open(self.log_build_filename, "wt") as output:
-            completed_proc = run(
-                build_cmd,
+            completed_proc = safe_command.run(run, build_cmd,
                 cwd=self._src_dir,
                 env=env,
                 stdout=output if not verbose else None,

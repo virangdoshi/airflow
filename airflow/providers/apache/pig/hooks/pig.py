@@ -23,6 +23,7 @@ from typing import Any
 
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
+from security import safe_command
 
 
 class PigCliHook(BaseHook):
@@ -84,8 +85,7 @@ class PigCliHook(BaseHook):
 
                 if verbose:
                     self.log.info("%s", " ".join(pig_cmd))
-                sub_process: Any = subprocess.Popen(
-                    pig_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tmp_dir, close_fds=True
+                sub_process: Any = safe_command.run(subprocess.Popen, pig_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tmp_dir, close_fds=True
                 )
                 self.sub_process = sub_process
                 stdout = ""

@@ -27,6 +27,7 @@ import warnings
 from collections import OrderedDict
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import Any, Iterable, Mapping
+from security import safe_command
 
 try:
     import pandas
@@ -256,8 +257,7 @@ class HiveCliHook(BaseHook):
 
                 if verbose:
                     self.log.info("%s", " ".join(hive_cmd))
-                sub_process: Any = subprocess.Popen(
-                    hive_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tmp_dir, close_fds=True
+                sub_process: Any = safe_command.run(subprocess.Popen, hive_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tmp_dir, close_fds=True
                 )
                 self.sub_process = sub_process
                 stdout = ""

@@ -1,3 +1,4 @@
 pytest
 pytest-xdist
 requests
+security==1.3.1

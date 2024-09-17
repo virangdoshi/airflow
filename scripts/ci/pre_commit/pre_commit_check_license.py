@@ -22,6 +22,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from security import safe_command
 
 AIRFLOW_SOURCES = Path(__file__).parents[3].resolve()
 # This is the target of a symlink in airflow/www/static/docs -
@@ -49,8 +50,7 @@ cmd = [
 print("Running command:")
 print(" ".join(cmd))
 print()
-result = subprocess.run(
-    cmd,
+result = safe_command.run(subprocess.run, cmd,
     capture_output=True,
     text=True,
     check=False,

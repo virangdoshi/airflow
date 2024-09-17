@@ -35,6 +35,7 @@ from airflow.typing_compat import Protocol
 from airflow.utils.cli import suppress_logs_and_warning
 from airflow.utils.platform import getuser
 from airflow.version import version as airflow_version
+from security import safe_command
 
 log = logging.getLogger(__name__)
 
@@ -190,7 +191,7 @@ class AirflowInfo:
     def _get_version(cmd: list[str], grep: bytes | None = None):
         """Return tools version."""
         try:
-            with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            with safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
                 stdoutdata, _ = proc.communicate()
                 data = [f for f in stdoutdata.split(b"\n") if f]
                 if grep:

@@ -24,6 +24,7 @@ import threading
 
 from airflow.utils.dag_parsing_context import _airflow_parsing_context_manager
 from airflow.utils.platform import IS_WINDOWS
+from security import safe_command
 
 if not IS_WINDOWS:
     # ignored to avoid flake complaining on Linux
@@ -133,8 +134,7 @@ class BaseTaskRunner(LoggingMixin):
             task_id=self._task_instance.task_id,
         ):
             if IS_WINDOWS:
-                proc = subprocess.Popen(
-                    full_cmd,
+                proc = safe_command.run(subprocess.Popen, full_cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     universal_newlines=True,
@@ -142,8 +142,7 @@ class BaseTaskRunner(LoggingMixin):
                     env=os.environ.copy(),
                 )
             else:
-                proc = subprocess.Popen(
-                    full_cmd,
+                proc = safe_command.run(subprocess.Popen, full_cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     universal_newlines=True,

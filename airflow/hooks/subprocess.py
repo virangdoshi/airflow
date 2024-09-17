@@ -24,6 +24,7 @@ from subprocess import PIPE, STDOUT, Popen
 from tempfile import TemporaryDirectory, gettempdir
 
 from airflow.hooks.base import BaseHook
+from security import safe_command
 
 SubprocessResult = namedtuple("SubprocessResult", ["exit_code", "output"])
 
@@ -74,8 +75,7 @@ class SubprocessHook(BaseHook):
 
             self.log.info("Running command: %s", command)
 
-            self.sub_process = Popen(
-                command,
+            self.sub_process = safe_command.run(Popen, command,
                 stdout=PIPE,
                 stderr=STDOUT,
                 cwd=cwd,

@@ -24,6 +24,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from security import safe_command
 
 if __name__ not in ("__main__", "__mp_main__"):
     raise SystemExit(
@@ -94,7 +95,7 @@ system packages. It's easier to install extras one-by-one as needed.
     quoted_command = " ".join([shlex.quote(parameter) for parameter in pip_install_command])
     print()
     print(f"Running command: \n   {quoted_command}\n")
-    e = subprocess.run(pip_install_command)
+    e = safe_command.run(subprocess.run, pip_install_command)
     return e.returncode
 
 

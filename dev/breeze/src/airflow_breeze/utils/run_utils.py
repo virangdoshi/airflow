@@ -38,6 +38,7 @@ from airflow_breeze.utils.ci_group import ci_group
 from airflow_breeze.utils.console import Output, get_console
 from airflow_breeze.utils.path_utils import AIRFLOW_SOURCES_ROOT
 from airflow_breeze.utils.shared_options import get_dry_run, get_verbose
+from security import safe_command
 
 RunCommandResult = Union[subprocess.CompletedProcess, subprocess.CalledProcessError]
 
@@ -128,7 +129,7 @@ def run_command(
     command_to_print = " ".join(shlex.quote(c) for c in cmd)
     env_to_print = get_environments_to_print(env)
     if not get_verbose(verbose_override) and not get_dry_run(dry_run_override):
-        return subprocess.run(cmd, input=input, check=check, env=cmd_env, cwd=workdir, **kwargs)
+        return safe_command.run(subprocess.run, cmd, input=input, check=check, env=cmd_env, cwd=workdir, **kwargs)
     with ci_group(title=f"Running command: {title}", message_type=None):
         get_console(output=output).print(f"\n[info]Working directory {workdir}\n")
         if input:
@@ -144,7 +145,7 @@ def run_command(
         try:
             if output_outside_the_group:
                 get_console().print("::endgroup::")
-            return subprocess.run(cmd, input=input, check=check, env=cmd_env, cwd=workdir, **kwargs)
+            return safe_command.run(subprocess.run, cmd, input=input, check=check, env=cmd_env, cwd=workdir, **kwargs)
         except subprocess.CalledProcessError as ex:
             if no_output_dump_on_exception:
                 if check:

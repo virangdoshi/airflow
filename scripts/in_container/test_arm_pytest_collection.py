@@ -23,6 +23,7 @@ import subprocess
 from pathlib import Path
 
 from rich.console import Console
+from security import safe_command
 
 AIRFLOW_SOURCES_ROOT = Path(__file__).parents[2].resolve()
 
@@ -42,7 +43,7 @@ if __name__ == "__main__":
         + " ".join(all_dependencies_to_remove)
         + "\n"
     )
-    subprocess.run(["pip", "uninstall", "-y"] + all_dependencies_to_remove)
+    safe_command.run(subprocess.run, ["pip", "uninstall", "-y"] + all_dependencies_to_remove)
     result = subprocess.run(["pytest", "--collect-only", "-qqqq", "--disable-warnings", "tests"], check=False)
     if result.returncode != 0:
         console.print("\n[red]Test collection in ARM environment failed.")

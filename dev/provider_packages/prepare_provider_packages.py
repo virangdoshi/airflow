@@ -50,6 +50,7 @@ from packaging.version import Version
 from rich.console import Console
 from rich.syntax import Syntax
 from yaml import safe_load
+from security import safe_command
 
 ALL_PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
 
@@ -914,8 +915,7 @@ def get_all_changes_for_package(
     current_tag_no_suffix = get_version_tag(current_version, provider_package_id)
     if verbose:
         console.print(f"Checking if tag '{current_tag_no_suffix}' exist.")
-    if not subprocess.call(
-        get_git_tag_check_command(current_tag_no_suffix),
+    if not safe_command.run(subprocess.call, get_git_tag_check_command(current_tag_no_suffix),
         cwd=provider_details.source_provider_package_path,
         stderr=subprocess.DEVNULL,
     ):
@@ -1545,8 +1545,7 @@ def tag_exists_for_version(provider_package_id: str, current_tag: str, verbose: 
     provider_details = get_provider_details(provider_package_id)
     if verbose:
         console.print(f"Checking if tag `{current_tag}` exists.")
-    if not subprocess.call(
-        get_git_tag_check_command(current_tag),
+    if not safe_command.run(subprocess.call, get_git_tag_check_command(current_tag),
         cwd=provider_details.source_provider_package_path,
         stderr=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,

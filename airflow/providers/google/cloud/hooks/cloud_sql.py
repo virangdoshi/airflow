@@ -52,6 +52,7 @@ from airflow.providers.google.common.hooks.base_google import GoogleBaseHook, ge
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.log.logging_mixin import LoggingMixin
+from security import safe_command
 
 UNIX_PATH_MAX = 108
 
@@ -529,7 +530,7 @@ class CloudSqlProxyRunner(LoggingMixin):
             command_to_run.extend(self._get_credential_parameters())
             self.log.info("Running the command: `%s`", " ".join(command_to_run))
 
-            self.sql_proxy_process = Popen(command_to_run, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            self.sql_proxy_process = safe_command.run(Popen, command_to_run, stdin=PIPE, stdout=PIPE, stderr=PIPE)
             self.log.info("The pid of cloud_sql_proxy: %s", self.sql_proxy_process.pid)
             while True:
                 line = (

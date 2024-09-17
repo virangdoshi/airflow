@@ -27,6 +27,7 @@ from airflow.exceptions import AirflowException
 from airflow.models import BaseOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.utils.helpers import exactly_one
+from security import safe_command
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -581,8 +582,7 @@ class S3FileTransformOperator(BaseOperator):
             f_source.flush()
 
             if self.transform_script is not None:
-                with subprocess.Popen(
-                    [self.transform_script, f_source.name, f_dest.name, *self.script_args],
+                with safe_command.run(subprocess.Popen, [self.transform_script, f_source.name, f_dest.name, *self.script_args],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     close_fds=True,

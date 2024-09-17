@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING, Any
 
 from airflow.exceptions import AirflowException, AirflowNotFoundException
 from airflow.hooks.base import BaseHook
+from security import safe_command
 
 if TYPE_CHECKING:
     from airflow.models.connection import Connection
@@ -169,8 +170,7 @@ class SparkSqlHook(BaseHook):
         """
         spark_sql_cmd = self._prepare_command(cmd)
 
-        self._sp = subprocess.Popen(
-            spark_sql_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, **kwargs
+        self._sp = safe_command.run(subprocess.Popen, spark_sql_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, **kwargs
         )
 
         for line in iter(self._sp.stdout):  # type: ignore

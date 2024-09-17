@@ -21,6 +21,7 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+from security import safe_command
 
 AIRFLOW_SOURCES = Path(__file__).parents[3].resolve()
 docker_files = [f"/root/{name}" for name in sys.argv[1:]]
@@ -43,8 +44,7 @@ print("Running command:")
 print(" ".join(cmd))
 print()
 
-result = subprocess.run(
-    cmd,
+result = safe_command.run(subprocess.run, cmd,
     capture_output=True,
     text=True,
     check=False,

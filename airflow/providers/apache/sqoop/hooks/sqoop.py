@@ -24,6 +24,7 @@ from typing import Any
 
 from airflow.exceptions import AirflowException
 from airflow.hooks.base import BaseHook
+from security import safe_command
 
 
 class SqoopHook(BaseHook):
@@ -103,7 +104,7 @@ class SqoopHook(BaseHook):
         """
         masked_cmd = " ".join(self.cmd_mask_password(cmd))
         self.log.info("Executing command: %s", masked_cmd)
-        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwargs) as sub_process:
+        with safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwargs) as sub_process:
             self.sub_process_pid = sub_process.pid
             for line in iter(sub_process.stdout):  # type: ignore
                 self.log.info(line.strip())

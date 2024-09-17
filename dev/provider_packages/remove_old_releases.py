@@ -32,6 +32,7 @@ from collections import defaultdict
 from typing import NamedTuple
 
 from packaging.version import Version
+from security import safe_command
 
 
 class VersionedFile(NamedTuple):
@@ -78,7 +79,7 @@ def process_all_files(directory: str, suffix: str, execute: bool):
             if not execute:
                 print(command)
             else:
-                subprocess.run(command, check=True)
+                safe_command.run(subprocess.run, command, check=True)
 
 
 def parse_args() -> argparse.Namespace:

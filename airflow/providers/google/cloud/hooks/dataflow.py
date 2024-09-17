@@ -36,6 +36,7 @@ from airflow.providers.apache.beam.hooks.beam import BeamHook, BeamRunnerType, b
 from airflow.providers.google.common.hooks.base_google import GoogleBaseHook
 from airflow.utils.log.logging_mixin import LoggingMixin
 from airflow.utils.timeout import timeout
+from security import safe_command
 
 # This is the default location
 # https://cloud.google.com/dataflow/pipelines/specifying-exec-params
@@ -997,7 +998,7 @@ class DataflowHook(GoogleBaseHook):
         ]
         self.log.info("Executing command: %s", " ".join(shlex.quote(c) for c in cmd))
         with self.provide_authorized_gcloud():
-            proc = subprocess.run(cmd, capture_output=True)
+            proc = safe_command.run(subprocess.run, cmd, capture_output=True)
         self.log.info("Output: %s", proc.stdout.decode())
         self.log.warning("Stderr: %s", proc.stderr.decode())
         self.log.info("Exit code %d", proc.returncode)

@@ -47,6 +47,7 @@ from airflow.secrets import DEFAULT_SECRETS_SEARCH_PATH, BaseSecretsBackend
 from airflow.utils import yaml
 from airflow.utils.module_loading import import_string
 from airflow.utils.weight_rule import WeightRule
+from security import safe_command
 
 log = logging.getLogger(__name__)
 
@@ -101,8 +102,7 @@ def expand_env_var(env_var: str | None) -> str | None:
 
 def run_command(command: str) -> str:
     """Runs command and returns stdout."""
-    process = subprocess.Popen(
-        shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True
+    process = safe_command.run(subprocess.Popen, shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True
     )
     output, stderr = (stream.decode(sys.getdefaultencoding(), "ignore") for stream in process.communicate())
 

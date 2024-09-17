@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import shlex
 import subprocess
+from security import safe_command
 
 
 def run_command(cmd: list[str], *, print_output_on_error: bool = True, return_output: bool = False, **kwargs):
@@ -26,7 +27,7 @@ def run_command(cmd: list[str], *, print_output_on_error: bool = True, return_ou
         if return_output:
             return subprocess.check_output(cmd, **kwargs).decode()
         else:
-            subprocess.run(cmd, check=True, **kwargs)
+            safe_command.run(subprocess.run, cmd, check=True, **kwargs)
     except subprocess.CalledProcessError as ex:
         if print_output_on_error:
             print("========================= OUTPUT start ============================")
