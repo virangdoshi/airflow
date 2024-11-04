@@ -21,7 +21,6 @@ import os
 import re
 import sys
 from copy import deepcopy
-from random import randint
 from subprocess import CalledProcessError, CompletedProcess
 
 from airflow_breeze.params.build_ci_params import BuildCiParams
@@ -32,6 +31,7 @@ from airflow_breeze.utils.host_info_utils import get_host_group_id, get_host_os,
 from airflow_breeze.utils.image import find_available_ci_image
 from airflow_breeze.utils.path_utils import AIRFLOW_SOURCES_ROOT
 from airflow_breeze.utils.shared_options import get_forced_answer
+import secrets
 
 try:
     from packaging import version
@@ -392,7 +392,7 @@ def get_env_variable_value(arg_name: str, params: CommonBuildParams | ShellParam
     value = "true" if raw_value is True else value
     value = "false" if raw_value is False else value
     if arg_name == "upgrade_to_newer_dependencies" and value == "true":
-        value = f"{randint(0, 2**32):x}"
+        value = f"{secrets.SystemRandom().randint(0, 2**32):x}"
     return value
 
 

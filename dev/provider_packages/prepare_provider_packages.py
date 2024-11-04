@@ -39,7 +39,6 @@ from enum import Enum
 from functools import lru_cache
 from os.path import dirname, relpath
 from pathlib import Path
-from random import choice
 from shutil import copyfile
 from typing import Any, Generator, Iterable, NamedTuple
 
@@ -50,6 +49,7 @@ from packaging.version import Version
 from rich.console import Console
 from rich.syntax import Syntax
 from yaml import safe_load
+import secrets
 
 ALL_PYTHON_VERSIONS = ["3.7", "3.8", "3.9", "3.10"]
 
@@ -1148,8 +1148,7 @@ def get_type_of_changes(answer: str | None) -> TypeOfChange:
     given_answer = ""
     if answer and answer.lower() in ["yes", "y"]:
         # Simulate all possible non-terminal answers
-        return choice(
-            [
+        return secrets.choice([
                 TypeOfChange.DOCUMENTATION,
                 TypeOfChange.BUGFIX,
                 TypeOfChange.FEATURE,

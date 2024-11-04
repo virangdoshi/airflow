@@ -18,12 +18,12 @@
 from __future__ import annotations
 
 import string
-from random import choice
+import secrets
 
 
 def get_random_string(length=8, choices=string.ascii_letters + string.digits):
     """Generate random string"""
-    return "".join(choice(choices) for _ in range(length))
+    return "".join(secrets.choice(choices) for _ in range(length))
 
 
 TRUE_LIKE_VALUES = {"on", "t", "true", "y", "yes", "1"}

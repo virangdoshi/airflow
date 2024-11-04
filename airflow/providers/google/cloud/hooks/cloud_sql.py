@@ -23,7 +23,6 @@ import json
 import os
 import os.path
 import platform
-import random
 import re
 import shutil
 import socket
@@ -52,6 +51,7 @@ from airflow.providers.google.common.hooks.base_google import GoogleBaseHook, ge
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.log.logging_mixin import LoggingMixin
+import secrets
 
 UNIX_PATH_MAX = 108
 
@@ -800,10 +800,10 @@ class CloudSQLDatabaseHook(BaseHook):
         We append project/location/instance to it later and postgres
         appends its own prefix, so we chose a shorter "${tempdir()}[8 random characters]"
         """
-        random.seed()
+        secrets.SystemRandom().seed()
         while True:
             candidate = os.path.join(
-                gettempdir(), "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
+                gettempdir(), "".join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(8))
             )
             if not os.path.exists(candidate):
                 return candidate

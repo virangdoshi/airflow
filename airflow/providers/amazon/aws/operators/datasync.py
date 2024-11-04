@@ -18,12 +18,12 @@
 from __future__ import annotations
 
 import logging
-import random
 from typing import TYPE_CHECKING, Sequence
 
 from airflow.exceptions import AirflowException, AirflowTaskTimeout
 from airflow.models import BaseOperator
 from airflow.providers.amazon.aws.hooks.datasync import DataSyncHook
+import secrets
 
 if TYPE_CHECKING:
     from airflow.utils.context import Context
@@ -271,7 +271,7 @@ class DataSyncOperator(BaseOperator):
             # the [0] one as it implies ordered items were received
             # from AWS and might lead to confusion. Rather explicitly
             # choose a random one
-            return random.choice(task_arn_list)
+            return secrets.choice(task_arn_list)
         raise AirflowException(f"Unable to choose a Task from {task_arn_list}")
 
     def choose_location(self, location_arn_list: list[str] | None) -> str | None:
@@ -285,7 +285,7 @@ class DataSyncOperator(BaseOperator):
             # the [0] one as it implies ordered items were received
             # from AWS and might lead to confusion. Rather explicitly
             # choose a random one
-            return random.choice(location_arn_list)
+            return secrets.choice(location_arn_list)
         raise AirflowException(f"Unable to choose a Location from {location_arn_list}")
 
     def _create_datasync_task(self) -> None:

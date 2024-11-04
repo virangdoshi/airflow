@@ -21,7 +21,6 @@ import functools
 import getpass
 import json
 import os
-import random
 import re
 import string
 from typing import Any
@@ -32,6 +31,7 @@ from marshmallow.exceptions import ValidationError
 from airflow.cli.simple_table import AirflowConsole
 from airflow.utils import cli as cli_utils
 from airflow.utils.cli import suppress_logs_and_warning
+import secrets
 
 
 class UserSchema(Schema):
@@ -70,7 +70,7 @@ def users_create(args):
             valid_roles = appbuilder.sm.get_all_roles()
             raise SystemExit(f"{args.role} is not a valid role. Valid roles are: {valid_roles}")
         if args.use_random_password:
-            password = "".join(random.choice(string.printable) for _ in range(16))
+            password = "".join(secrets.choice(string.printable) for _ in range(16))
         elif args.password:
             password = args.password
         else:

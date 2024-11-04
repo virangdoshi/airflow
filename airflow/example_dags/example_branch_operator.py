@@ -18,8 +18,6 @@
 """Example DAG demonstrating the usage of the BranchPythonOperator."""
 from __future__ import annotations
 
-import random
-
 import pendulum
 
 from airflow import DAG
@@ -27,6 +25,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import BranchPythonOperator
 from airflow.utils.edgemodifier import Label
 from airflow.utils.trigger_rule import TriggerRule
+import secrets
 
 with DAG(
     dag_id="example_branch_operator",
@@ -43,7 +42,7 @@ with DAG(
 
     branching = BranchPythonOperator(
         task_id="branching",
-        python_callable=lambda: random.choice(options),
+        python_callable=lambda: secrets.choice(options),
     )
     run_this_first >> branching
 

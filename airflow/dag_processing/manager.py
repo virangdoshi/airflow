@@ -25,7 +25,6 @@ import inspect
 import logging
 import multiprocessing
 import os
-import random
 import signal
 import sys
 import time
@@ -63,6 +62,7 @@ from airflow.utils.process_utils import (
 )
 from airflow.utils.session import NEW_SESSION, provide_session
 from airflow.utils.sqlalchemy import prohibit_commit, skip_locked, with_row_locks
+import secrets
 
 
 class DagParsingStat(NamedTuple):
@@ -1106,7 +1106,7 @@ class DagFileProcessorManager(LoggingMixin):
         elif list_mode == "random_seeded_by_host":
             # Shuffle the list seeded by hostname so multiple schedulers can work on different
             # set of files. Since we set the seed, the sort order will remain same per host
-            random.Random(get_hostname()).shuffle(file_paths)
+            secrets.SystemRandom().Random(get_hostname()).shuffle(file_paths)
 
         if file_paths_to_stop_watching:
             self.set_file_paths(
