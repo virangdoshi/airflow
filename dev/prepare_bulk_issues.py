@@ -71,8 +71,7 @@ def render_template_file(
     template_env = jinja2.Environment(
         loader=template_loader,
         undefined=jinja2.StrictUndefined,
-        autoescape=autoescape,
-        keep_trailing_newline=keep_trailing_newline,
+        autoescape=True, keep_trailing_newline=keep_trailing_newline,
     )
     template = template_env.get_template(template_name)
     content: str = template.render(context)
@@ -98,8 +97,7 @@ def render_template_string(
     template = jinja2.Environment(
         loader=BaseLoader(),
         undefined=jinja2.StrictUndefined,
-        autoescape=autoescape,
-        keep_trailing_newline=keep_trailing_newline,
+        autoescape=True, keep_trailing_newline=keep_trailing_newline,
     ).from_string(template_string)
     content: str = template.render(context)
     return content

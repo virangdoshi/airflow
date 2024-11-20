@@ -36,7 +36,7 @@ ALL_PROVIDER_YAMLS = load_package_data()
 
 def _get_jinja_env():
     loader = jinja2.FileSystemLoader(CURRENT_DIR, followlinks=True)
-    env = jinja2.Environment(loader=loader, undefined=jinja2.StrictUndefined)
+    env = jinja2.Environment(loader=loader, undefined=jinja2.StrictUndefined, autoescape=True)
     return env
 
 
